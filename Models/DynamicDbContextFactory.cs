@@ -21,11 +21,12 @@ namespace TodoApi.Models
             var connectionString = _tenantService.GetConnectionString();
 
             var optionsBuilder = new DbContextOptionsBuilder<TodoContext>();
-           
+
             //TODO: here need to set the connection string for the database
             //optionsBuilder.UseSqlServer(connectionString); 
             //optionsBuilder.UseSqlite(connectionString);
 
+            optionsBuilder.UseInMemoryDatabase(connectionString);
             return new TodoContext(optionsBuilder.Options);
         }
     }
