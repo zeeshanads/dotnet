@@ -6,6 +6,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using TodoApi.Models;
+using TodoApi.ContextMiddleware;
+using System.Data.Entity.Infrastructure;
+using System.Data.Entity;
+using TodoApi.Services;
 
 namespace TodoApi
 {
@@ -30,6 +34,11 @@ namespace TodoApi
             });
 
             services.AddDbContext<TodoContext>(options => options.UseInMemoryDatabase("TodoList"));
+
+            services.AddHttpContextAccessor();
+            // Add the tenant service
+            services.AddScoped<ITenantService, TenantService>();
+            services.AddScoped<DynamicDbContextFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +59,7 @@ namespace TodoApi
                 app.UseDeveloperExceptionPage();
             }
 
+           // app.UseMiddleware<ConnectionStringMiddleware>();
             //app.UseHttpsRedirection();
 
             app.UseDefaultFiles();
@@ -59,6 +69,7 @@ namespace TodoApi
             app.UseRouting();
 
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {
