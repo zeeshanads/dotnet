@@ -4,6 +4,8 @@ angular.module('todoApp')
 
     $http.defaults.useXDomain = true;
     delete $http.defaults.headers.common['X-Requested-With']; 
+    // Add X-Client-ID header to all requests
+    $http.defaults.headers.common['X-Client-ID'] = 'ClientA'; 
 
     return {
         getItems : function(){

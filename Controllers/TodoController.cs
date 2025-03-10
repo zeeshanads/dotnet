@@ -16,15 +16,24 @@ namespace TodoApi.Controllers
     public class TodoController : Controller
     {
         private readonly TodoContext _context;
-
-        public TodoController(TodoContext context)
+        private readonly DynamicDbContextFactory _dbContextFactory;
+        private readonly TodoContext _contextDynamic;
+        public TodoController(TodoContext context, DynamicDbContextFactory dbContextFactory)
         {
             _context = context;
-
+           
             if (_context.TodoItems.Count() == 0)
             {
                 _context.TodoItems.Add(new TodoItem { Name = "Item1" });
                 _context.SaveChanges();
+            }
+
+            _dbContextFactory = dbContextFactory;
+            _contextDynamic = _dbContextFactory.CreateDbContext();
+            if (_contextDynamic.TodoItems.Count() == 0)
+            {
+                _contextDynamic.TodoItems.Add(new TodoItem { Name = "Item1" });
+                _contextDynamic.SaveChanges();
             }
         }
 
@@ -32,7 +41,8 @@ namespace TodoApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItem()
         {
-            return await _context.TodoItems.ToListAsync();
+           
+            return await _contextDynamic.TodoItems.ToListAsync();
         }
 
         // GET: api/Todo/5
